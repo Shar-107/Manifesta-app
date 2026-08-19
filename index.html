@@ -2,53 +2,73 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manifesta — Wish it. Manifest it.</title>
-  
-  <!-- React and ReactDOM from CDN -->
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://jsdelivr.net"></script>
-  <!-- Babel for runtime JSX compilation -->
+  <!-- Load React and Babel safely via CDNs -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="https://jsdelivr.net"></script>
-  <!-- Lucide Icons -->
+  <!-- Load Supabase library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Load Lucide Icons development library -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://jsdelivr.net"></script>
   <style>
-    * { box-sizing: border-box; }
-    body { 
-      margin: 0; 
-      padding: 0; 
-      background-color: #F3F4F6;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Inter, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-    input:focus, select:focus, textarea:focus { 
-      border-color: #C026D3 !important; 
-      box-shadow: 0 0 0 3px rgba(192, 38, 212, 0.12); 
-    }
-    ::placeholder { color: #8B7FA3; opacity: 0.7; }
-    
-    @keyframes orbPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
-    @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
-    @keyframes screenIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    
-    .m-screen { animation: screenIn 0.35s ease; }
-    
-    /* Hide scrollbars for slick mobile look */
-    ::-webkit-scrollbar { display: none; }
+    body { margin: 0; background-color: #FFF8EE; }
+    #root { min-height: 100vh; }
   </style>
 </head>
 <body>
-
   <div id="root"></div>
 
   <script type="text/babel">
+    // Deconstruct standard hooks safely from global React context
     const { useState, useEffect, useRef, useCallback } = React;
 
-    /* ---------------- Design Palette ---------------- */
+    // Mapping Lucide Icons dynamically from the window global bundle
+    const Sparkles = (props) => <i data-lucide="sparkles" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Gift = (props) => <i data-lucide="gift" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Cake = (props) => <i data-lucide="cake" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Heart = (props) => <i data-lucide="heart" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Home = (props) => <i data-lucide="home" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const TrendingUp = (props) => <i data-lucide="trending-up" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Users = (props) => <i data-lucide="users" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const PartyPopper = (props) => <i data-lucide="party-popper" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Link2 = (props) => <i data-lucide="link-2" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Share2 = (props) => <i data-lucide="share-2" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Plus = (props) => <i data-lucide="plus" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const X = (props) => <i data-lucide="x" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Check = (props) => <i data-lucide="check" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Pencil = (props) => <i data-lucide="pencil" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Trash2 = (props) => <i data-lucide="trash-2" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Copy = (props) => <i data-lucide="copy" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const ArrowLeft = (props) => <i data-lucide="arrow-left" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Eye = (props) => <i data-lucide="eye" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const EyeOff = (props) => <i data-lucide="eye-off" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const LogOut = (props) => <i data-lucide="log-out" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Calendar = (props) => <i data-lucide="calendar" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const ExternalLink = (props) => <i data-lucide="external-link" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const ChevronRight = (props) => <i data-lucide="chevron-right" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Mail = (props) => <i data-lucide="mail" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Phone = (props) => <i data-lucide="phone" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Lock = (props) => <i data-lucide="lock" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const MessageCircle = (props) => <i data-lucide="message-circle" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Send = (props) => <i data-lucide="send" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const UserIcon = (props) => <i data-lucide="user" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Baby = (props) => <i data-lucide="baby" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const Flower2 = (props) => <i data-lucide="flower-2" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const KeyRound = (props) => <i data-lucide="key-round" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+    const ShieldCheck = (props) => <i data-lucide="shield-check" style={{display:'inline-flex', width:props.size||24, height:props.size||24, strokeWidth:props.strokeWidth||2, color:props.color||'currentColor', ...props.style}}></i>;
+
+    // Hook to refresh Lucide rendering icons whenever DOM state shifts
+    const useLucideRefresh = (deps = []) => {
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }, deps);
+    };
+
+    /* ---------------- palette / tokens ---------------- */
     const C = {
       ink: "#160F2E",
       ink2: "#241A46",
@@ -65,48 +85,44 @@
     const GRAD = `linear-gradient(135deg, ${C.magenta} 0%, ${C.coral} 55%, ${C.gold} 100%)`;
     const GRAD_SOFT = `linear-gradient(135deg, rgba(192,38,212,0.12) 0%, rgba(251,107,74,0.12) 55%, rgba(251,191,36,0.12) 100%)`;
 
-    const DISPLAY_FONT = "Georgia, serif";
-    const BODY_FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    const DISPLAY_FONT = "Georgia, 'Iowan Old Style', 'Palatino Linotype', Palatino, serif";
+    const BODY_FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif";
 
-    /* ---------------- Wishlist Occasions ---------------- */
     const EVENT_TYPES = [
-      { id: "wedding", label: "Wedding", icon: "Heart" },
-      { id: "self_birthday", label: "My Birthday", icon: "Sparkles" },
-      { id: "birthday_spouse", label: "Spouse's Birthday", icon: "Cake" },
-      { id: "birthday_kid", label: "Kid's Birthday", icon: "Baby" },
-      { id: "birthday_parent", label: "Parent's Birthday", icon: "User" },
-      { id: "birthday_family", label: "Family Birthday", icon: "PartyPopper" },
-      { id: "housewarming", label: "House Warming", icon: "Home" },
-      { id: "promotion", label: "Promotion", icon: "TrendingUp" },
-      { id: "anniversary", label: "Anniversary", icon: "Flower2" },
-      { id: "other", label: "Other", icon: "Gift" },
+      { id: "wedding", label: "Wedding", icon: Heart },
+      { id: "self_birthday", label: "My Birthday", icon: Sparkles },
+      { id: "birthday_spouse", label: "Spouse's Birthday", icon: Cake },
+      { id: "birthday_kid", label: "Kid's Birthday", icon: Baby },
+      { id: "birthday_parent", label: "Parent's Birthday", icon: UserIcon },
+      { id: "birthday_family", label: "Family Birthday", icon: PartyPopper },
+      { id: "housewarming", label: "House Warming", icon: Home },
+      { id: "promotion", label: "Promotion", icon: TrendingUp },
+      { id: "anniversary", label: "Anniversary", icon: Flower2 },
+      { id: "other", label: "Other", icon: Gift },
     ];
-    
     const eventMeta = (id) => EVENT_TYPES.find((e) => e.id === id) || EVENT_TYPES[EVENT_TYPES.length - 1];
 
-    /* ---------------- Lucide Icon Helper Component ---------------- */
-    function Icon({ name, size = 18, color = "currentColor", style }) {
-      // Dynamic rendering safely maps strings from our config to lucide components
-      const IconComponent = lucide[name] || lucide.HelpCircle;
-      return <IconComponent size={size} color={color} style={style} />;
-    }
-
-    /* ---------------- Data Generators ---------------- */
+    /* ---------------- tiny helpers ---------------- */
     const genId = (len = 7) => {
       const chars = "abcdefghijkmnpqrstuvwxyz23456789";
       let s = "";
       for (let i = 0; i < len; i++) s += chars[Math.floor(Math.random() * chars.length)];
       return s;
     };
-    
-    const domainOf = (url) => {
+    const genOtp = () => String(Math.floor(100000 + Math.random() * 900000));
+    const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+    const isPhone = (v) => /^[0-9]{10,15}$/.test(v.replace(/[\s+\-()]/g, ""));
+    const cleanPhone = (v) => v.replace(/[\s+\-()]/g, "");
+
+    function domainOf(url) {
       try {
         const u = new URL(/^https?:\/\//i.test(url) ? url : `https://${url}`);
         return u.hostname.replace(/^www\./, "");
-      } catch { return null; }
-    };
-
-    const guessTitle = (url) => {
+      } catch {
+        return null;
+      }
+    }
+    function guessTitle(url) {
       try {
         const u = new URL(/^https?:\/\//i.test(url) ? url : `https://${url}`);
         const seg = decodeURIComponent(u.pathname.split("/").filter(Boolean).pop() || "");
@@ -114,62 +130,54 @@
         t = t.replace(/(dp|gp|product|item|itm|ref)/gi, "").replace(/\s+/g, " ").trim();
         if (!t || t.length < 3) return u.hostname.replace(/^www\./, "").split(".")[0];
         return t.replace(/\w/g, (c) => c.toUpperCase()).slice(0, 70);
-      } catch { return url.slice(0, 40); }
-    };
-
+      } catch {
+        return url.slice(0, 40);
+      }
+    }
     function tokenColors(str) {
       let h = 0;
       for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
-      return `linear-gradient(135deg, hsl(${h % 360} 70% 55%), hsl(${(h % 360 + 55) % 360} 75% 60%))`;
+      const hue1 = h % 360;
+      const hue2 = (hue1 + 55) % 360;
+      return `linear-gradient(135deg, hsl(${hue1} 70% 55%), hsl(${hue2} 75% 60%))`;
     }
 
-    /* ---------------- Safe Engine Storage Engine (Cross-Platform) ---------------- */
-   
-/* ---------------- Supabase Live Cloud Storage Setup ---------------- */
-const SUPABASE_URL = "https://yzbnlvttqbkqemzvzxzs.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6Ym5sdnR0cWJrcWVtenZ6eHpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxNTEyMjQsImV4cCI6MjEwMjcyNzIyNH0.9f9zvD-J3iTaD9f8eZg_r5L1T0lTM1i6cLQic1vvmf4";
+    /* ---------------- Supabase Live Cloud Storage Setup ---------------- */
+    const SUPABASE_URL = "https://yzbnlvttqbkqemzvzxzs.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6Ym5sdnR0cWJrcWVtenZ6eHpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxNTEyMjQsImV4cCI6MjEwMjcyNzIyNH0.9f9zvD-J3iTaD9f8eZg_r5L1T0lTM1i6cLQic1vvmf4";
 
-// This initializes the master connection link
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-const StorageEngine = {
-  // Pulls data from your cloud tables
-  get: async (table, keyId) => {
-    try {
-      const { data, error } = await supabase
-        .from(table)
-        .select('*')
-        .eq('id', keyId)
-        .single();
-      
-      if (error || !data) return null;
-      return JSON.parse(data.saved_data);
-    } catch { 
-      return null; 
-    }
-  },
-  
-  // Saves or updates data in your cloud tables
-  set: async (table, keyId, val) => {
-    try {
-      await supabase
-        .from(table)
-        .upsert({ id: keyId, saved_data: JSON.stringify(val) });
-    } catch(e) {
-      console.error("Cloud save failed:", e);
-    }
-  }
-};
+    const StorageEngine = {
+      get: async (table, keyId) => {
+        if (!supabase) {
+          try {
+            const item = localStorage.getItem(table + "_" + keyId);
+            return item ? JSON.parse(item) : null;
+          } catch { return null; }
+        }
+        try {
+          const { data, error } = await supabase.from(table).select('*').eq('id', keyId).single();
+          if (error || !data) return null;
+          return JSON.parse(data.saved_data);
+        } catch { return null; }
+      },
+      set: async (table, keyId, val) => {
+        if (!supabase) {
+          try { localStorage.setItem(table + "_" + keyId, JSON.stringify(val)); } catch(e) {}
+          return;
+        }
+        try {
+          await supabase.from(table).upsert({ id: keyId, saved_data: JSON.stringify(val) });
+        } catch(e) { console.error("Cloud save failed:", e); }
+      }
+    };
 
-// These represent your live cloud tables instead of local device keys
-const K_USERS = "profiles";
-const K_SESSION = "manifesta_active_session"; // We keep session local so users stay logged in on their own phone
-const windexKey = (uid) => uid;
-const wlKey = (id) => id;
+    const K_USERS = "profiles";
+    const K_SESSION = "manifesta_active_session";
 
-
-    /* ---------------- Small Global UI Components ---------------- */
     function WishOrb({ size = 40, spin = false }) {
+      useLucideRefresh();
       return (
         <div style={{
           width: size, height: size, borderRadius: "50%",
@@ -177,7 +185,7 @@ const wlKey = (id) => id;
           boxShadow: "0 4px 14px rgba(192,38,212,0.35)", flexShrink: 0,
           animation: spin ? "orbPulse 2.2s ease-in-out infinite" : "none",
         }}>
-          <Icon name="Sparkles" size={size * 0.52} color="#fff" />
+          <Sparkles size={size * 0.52} color="#fff" strokeWidth={2.2} />
         </div>
       );
     }
@@ -189,27 +197,21 @@ const wlKey = (id) => id;
           <span style={{
             fontFamily: DISPLAY_FONT, fontWeight: 700, fontSize: size * 0.72,
             letterSpacing: "-0.02em", color: dark ? "#fff" : C.text,
-          }}>
-            Manifesta
-          </span>
+          }}>Manifesta</span>
         </div>
       );
     }
 
     function GradButton({ children, onClick, disabled, type = "button", style, full = true }) {
       return (
-        <button type={type} onClick={onClick} disabled={disabled}
-          style={{
-            width: full ? "100%" : "auto",
-            background: disabled ? "#E4DCEE" : GRAD,
-            color: "#fff", border: "none", borderRadius: 14,
-            padding: "14px 20px", fontSize: 15.5, fontWeight: 600,
-            fontFamily: BODY_FONT, cursor: disabled ? "not-allowed" : "pointer",
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-            transition: "transform 0.15s ease",
-            boxShadow: disabled ? "none" : "0 6px 16px rgba(192,38,212,0.28)",
-            ...style,
-          }}>
+        <button type={type} onClick={onClick} disabled={disabled} style={{
+          width: full ? "100%" : "auto", background: disabled ? "#E4DCEE" : GRAD,
+          color: "#fff", border: "none", borderRadius: 14, padding: "14px 20px", fontSize: 15.5,
+          fontWeight: 600, fontFamily: BODY_FONT, cursor: disabled ? "not-allowed" : "pointer",
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+          transition: "transform 0.15s ease, box-shadow 0.15s ease",
+          boxShadow: disabled ? "none" : "0 6px 16px rgba(192,38,212,0.28)", ...style,
+        }}>
           {children}
         </button>
       );
@@ -217,29 +219,20 @@ const wlKey = (id) => id;
 
     function GhostButton({ children, onClick, style }) {
       return (
-        <button onClick={onClick}
-          style={{
-            width: "100%", background: "transparent", color: C.text,
-            border: `1.5px solid ${C.line}`, borderRadius: 14, padding: "13px 20px",
-            fontSize: 15, fontWeight: 600, fontFamily: BODY_FONT, cursor: "pointer",
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-            ...style,
-          }}>
-          {children}
-        </button>
+        <button onClick={onClick} style={{
+          width: "100%", background: "transparent", color: C.text, border: `1.5px solid ${C.line}`,
+          borderRadius: 14, padding: "13px 20px", fontSize: 15, fontWeight: 600, fontFamily: BODY_FONT,
+          cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, ...style,
+        }}>{children}</button>
       );
     }
 
-    function Field({ label, icon, children }) {
+    function Field({ label, icon: Icon, children }) {
       return (
         <div style={{ marginBottom: 16 }}>
-          {label && (
-            <label style={{ display: "block", fontSize: 12.5, fontWeight: 700, color: C.muted, marginBottom: 6, letterSpacing: "0.02em", textTransform: "uppercase" }}>
-              {label}
-            </label>
-          )}
+          {label && <label style={{ display: "block", fontSize: 12.5, fontWeight: 700, color: C.muted, marginBottom: 6, letterSpacing: "0.02em", textTransform: "uppercase" }}>{label}</label>}
           <div style={{ position: "relative" }}>
-            {icon && <Icon name={icon} size={17} color={C.muted} style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />}
+            {Icon && <Icon size={17} color={C.muted} style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />}
             {children}
           </div>
         </div>
@@ -247,13 +240,13 @@ const wlKey = (id) => id;
     }
 
     const inputStyle = (withIcon) => ({
-      width: "100%", boxSizing: "border-box",
-      padding: withIcon ? "13px 14px 13px 40px" : "13px 14px",
-      borderRadius: 12, border: `1.5px solid ${C.line}`, fontSize: 15.5,
-      fontFamily: BODY_FONT, color: C.text, outline: "none", background: "#FCFAFF",
+      width: "100%", boxSizing: "border-box", padding: withIcon ? "13px 14px 13px 40px" : "13px 14px",
+      borderRadius: 12, border: `1.5px solid ${C.line}`, fontSize: 15.5, fontFamily: BODY_FONT,
+      color: C.text, outline: "none", background: "#FCFAFF",
     });
 
     function Toast({ text }) {
+      useLucideRefresh([text]);
       if (!text) return null;
       return (
         <div style={{
@@ -261,20 +254,20 @@ const wlKey = (id) => id;
           background: C.ink, color: "#fff", padding: "11px 20px", borderRadius: 30,
           fontSize: 13.5, fontWeight: 600, boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
           zIndex: 999, display: "flex", alignItems: "center", gap: 8, maxWidth: "88%",
-          animation: "toastIn 0.25s ease",
         }}>
-          <Icon name="Check" size={15} /> {text}
+          <Check size={15} /> {text}
         </div>
       );
     }
 
     function TopBar({ title, onBack, right }) {
+      useLucideRefresh();
       return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 20px 10px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             {onBack && (
               <button onClick={onBack} style={{ background: "#F4EEFB", border: "none", borderRadius: 10, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                <Icon name="ArrowLeft" size={17} color={C.text} />
+                <ArrowLeft size={17} color={C.text} />
               </button>
             )}
             <span style={{ fontFamily: DISPLAY_FONT, fontSize: 19, fontWeight: 700, color: C.text }}>{title}</span>
@@ -313,11 +306,9 @@ const wlKey = (id) => id;
       );
     }
 
-    /* =================================================================
-       MAIN APPLICATION LAYOUT AND ENGINE
-    ================================================================= */
     export default function App() {
-      const [screen, setScreen] = useState("landing"); 
+      const [booting, setBooting] = useState(true);
+      const [screen, setScreen] = useState("landing");
       const [toast, setToast] = useState("");
       const toastTimer = useRef(null);
 
@@ -327,14 +318,16 @@ const wlKey = (id) => id;
         toastTimer.current = setTimeout(() => setToast(""), 2200);
       };
 
-      const [user, setUser] = useState(null); 
+      const [user, setUser] = useState(null);
       const [wishlists, setWishlists] = useState([]);
       const [activeWl, setActiveWl] = useState(null);
 
-      // Registration/Auth States
-      const [authType, setAuthType] = useState("email"); 
+      const [authType, setAuthType] = useState("email");
       const [identifier, setIdentifier] = useState("");
       const [regName, setRegName] = useState("");
+      const [otp, setOtp] = useState("");
+      const [otpInput, setOtpInput] = useState("");
+      const [otpErr, setOtpErr] = useState("");
       const [pw, setPw] = useState("");
       const [pw2, setPw2] = useState("");
       const [showPw, setShowPw] = useState(false);
@@ -343,578 +336,393 @@ const wlKey = (id) => id;
       const [loginPw, setLoginPw] = useState("");
       const [pasteLink, setPasteLink] = useState("");
 
-      // Cold Bootstrap Flow
-      useEffect(() => {
-        // Parse shareable deep-links natively out of the browser window window address location
-        const queryParams = new URLSearchParams(window.location.search);
-        const sharedWlId = queryParams.get("w");
-        
-        if (sharedWlId) {
-          const targetWl = StorageEngine.get(wlKey(sharedWlId));
-          if (targetWl) {
-            setActiveWl(targetWl);
-            setScreen("shared");
-            return;
-          }
-        }
+      useLucideRefresh([screen]);
 
-        const activeSession = StorageEngine.get(K_SESSION);
-        if (activeSession && activeSession.userId) {
-          const registeredUsers = StorageEngine.get(K_USERS) || {};
-          const foundUser = registeredUsers[activeSession.userId];
-          if (foundUser) {
-            setUser(foundUser);
-            syncAndFetchWishlists(foundUser.id);
-            setScreen("dashboard");
+      useEffect(() => {
+        (async () => {
+          // Direct deep linking resolution for shares via clean URL router params
+          const params = new URLSearchParams(window.location.search);
+          const sharedWlId = params.get("w");
+          if (sharedWlId) {
+            const wl = await StorageEngine.get("wishlists", sharedWlId);
+            if (wl) {
+              setActiveWl(wl);
+              setScreen("shared");
+              setBooting(false);
+              return;
+            }
           }
-        }
+
+          try {
+            const activeUid = localStorage.getItem(K_SESSION);
+            if (activeUid) {
+              const u = await StorageEngine.get(K_USERS, activeUid);
+              if (u) {
+                setUser(u);
+                const wls = await fetchWishlists(u.id, u.wishlistIds || []);
+                setWishlists(wls);
+                setScreen("dashboard");
+              }
+            }
+          } catch (e) {}
+          setBooting(false);
+        })();
       }, []);
 
-      const syncAndFetchWishlists = (uid) => {
-        const index = StorageEngine.get(windexKey(uid)) || [];
-        const records = index.map(id => StorageEngine.get(wlKey(id))).filter(Boolean);
-        records.sort((a, b) => b.createdAt - a.createdAt);
-        setWishlists(records);
-        return records;
-      };
+      async function fetchWishlists(uid, wlIds) {
+        const loaded = [];
+        for (const id of wlIds) {
+          const wl = await StorageEngine.get("wishlists", id);
+          if (wl) loaded.push(wl);
+        }
+        return loaded.sort((a, b) => b.createdAt - a.createdAt);
+      }
 
-      const handleRegistrationNext = () => {
+      function resetAuthState() {
+        setIdentifier(""); setRegName(""); setOtp(""); setOtpInput(""); setOtpErr("");
+        setPw(""); setPw2(""); setAuthErr("");
+      }
+
+      async function handleSendOtp() {
         setAuthErr("");
-        const rawId = identifier.trim();
-        if (authType === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawId)) {
-          return setAuthErr("Enter a valid email address.");
-        }
-        if (authType === "phone" && rawId.length < 10) {
-          return setAuthErr("Enter a valid mobile number.");
-        }
-
-        const calculatedUid = authType === "email" ? rawId.toLowerCase() : rawId.replace(/[\s+\-()]/g, "");
-        const existingUsers = StorageEngine.get(K_USERS) || {};
+        const val = identifier.trim();
+        if (authType === "email" && !isEmail(val)) return setAuthErr("Enter a valid email address.");
+        if (authType === "phone" && !isPhone(val)) return setAuthErr("Enter a valid phone number.");
         
-        if (existingUsers[calculatedUid]) {
-          return setAuthErr("An account already exists under this ID. Please try logging in.");
-        }
+        const uid = authType === "email" ? val.toLowerCase() : cleanPhone(val);
+        const existing = await StorageEngine.get(K_USERS, uid);
+        if (existing) return setAuthErr("An account already exists for this entry. Try logging in.");
         
-        // Advance directly to password configuration
-        setScreen("set-password");
-      };
+        const code = genOtp();
+        setOtp(code);
+        setOtpInput("");
+        setOtpErr("");
+        setScreen("otp");
+        notify("OTP generated");
+      }
 
-      const handleCreateAccountComplete = () => {
+      function handleVerifyOtp() {
+        if (otpInput.trim() === otp) {
+          setOtpErr("");
+          setScreen("set-password");
+        } else {
+          setOtpErr("Code doesn't match.");
+        }
+      }
+
+      async function handleCreateAccount() {
         setAuthErr("");
         if (pw.length < 8) return setAuthErr("Password must be at least 8 characters.");
-        if (pw !== pw2) return setAuthErr("Passwords do not match.");
-
-        const cleanId = authType === "email" ? identifier.trim().toLowerCase() : identifier.trim().replace(/[\s+\-()]/g, "");
-        const totalUsers = StorageEngine.get(K_USERS) || {};
-
-        const constructedUserObj = {
-          id: cleanId,
-          type: authType,
-          name: regName.trim() || cleanId,
-          password: pw,
-          createdAt: Date.now()
-        };
-
-        totalUsers[cleanId] = constructedUserObj;
-        StorageEngine.set(K_USERS, totalUsers);
-        StorageEngine.set(windexKey(cleanId), []);
-
-        // Explicitly set credentials onto local state to guarantee immediate resolution on next action
-        setLoginId(cleanId);
-        setLoginPw(pw);
+        if (pw !== pw2) return setAuthErr("Passwords don't match.");
         
+        const uid = authType === "email" ? identifier.trim().toLowerCase() : cleanPhone(identifier.trim());
+        const newUser = { id: uid, type: authType, name: regName.trim() || uid, password: pw, wishlistIds: [], createdAt: Date.now() };
+        
+        await StorageEngine.set(K_USERS, uid, newUser);
+        setLoginId(uid);
         setScreen("registered");
-      };
+      }
 
-      const handleProcessLogin = () => {
+      async function handleLogin() {
         setAuthErr("");
-        const formattedLoginTarget = loginId.trim().toLowerCase().match(/^[0-9+\-\s()]+$/) 
-          ? loginId.trim().replace(/[\s+\-()]/g, "") 
-          : loginId.trim().toLowerCase();
-
-        const allUsersMap = StorageEngine.get(K_USERS) || {};
-        const targetedUserRecord = allUsersMap[formattedLoginTarget];
-
-        if (!targetedUserRecord || targetedUserRecord.password !== loginPw) {
-          return setAuthErr("Incorrect ID or password entry. Double check input parameters.");
-        }
-
-        setUser(targetedUserRecord);
-        StorageEngine.set(K_SESSION, { userId: targetedUserRecord.id });
-        syncAndFetchWishlists(targetedUserRecord.id);
+        const uid = loginId.trim().toLowerCase().match(/^[0-9+\-\s()]+$/) ? cleanPhone(loginId.trim()) : loginId.trim().toLowerCase();
+        const u = await StorageEngine.get(K_USERS, uid);
+        if (!u || u.password !== loginPw) return setAuthErr("Incorrect credentials.");
         
-        // Clean out sensitive vectors
-        setLoginPw(""); 
-        setAuthErr("");
+        setUser(u);
+        localStorage.setItem(K_SESSION, u.id);
+        const wls = await fetchWishlists(u.id, u.wishlistIds || []);
+        setWishlists(wls);
+        resetAuthState();
+        setLoginPw(""); setLoginId("");
         setScreen("dashboard");
-        notify(`Welcome, ${targetedUserRecord.name}`);
-      };
+        notify(`Welcome back, ${u.name}`);
+      }
 
-      const handleLogoutAction = () => {
-        StorageEngine.set(K_SESSION, null);
+      async function handleLogout() {
+        localStorage.removeItem(K_SESSION);
         setUser(null);
         setWishlists([]);
         setScreen("landing");
-      };
+      }
 
-      const openDeepLinkCode = (rawInputText) => {
-        let lookupCode = rawInputText.trim();
-        // Parse codes out of appended string parameters gracefully
-        if (lookupCode.includes("w=")) {
-          const extracts = lookupCode.split("w=");
-          lookupCode = extracts[extracts.length - 1];
-        }
-        
-        const fetchedWl = StorageEngine.get(wlKey(lookupCode));
-        if (!fetchedWl) {
-          return notify("Wishlist registry record not located.");
-        }
-        
-        setActiveWl(fetchedWl);
+      async function openSharedByCode(raw) {
+        let code = raw.trim();
+        const m = code.match(/[?&]w=([a-z0-9]+)/i);
+        if (m) code = m[1];
+        if (!code) return notify("Paste a valid link.");
+        const wl = await StorageEngine.get("wishlists", code);
+        if (!wl) return notify("Wishlist not found.");
+        setActiveWl(wl);
         setScreen("shared");
-      };
+      }
 
-      /* ---------------- Core Engine Mutation Layer ---------------- */
-      const handleCreateWishlist = ({ title, eventType, eventDate }) => {
-        const uniqueWlId = genId(7);
-        const freshListRecord = {
-          id: uniqueWlId,
-          ownerId: user.id,
-          ownerName: user.name,
+      async function createWishlist({ title, eventType, eventDate }) {
+        const id = genId(7);
+        const wl = {
+          id, ownerId: user.id, ownerName: user.name,
           title: title.trim() || eventMeta(eventType).label,
-          eventType,
-          eventDate: eventDate || null,
-          items: [],
-          createdAt: Date.now()
+          eventType, eventDate: eventDate || null, items: [], createdAt: Date.now(),
         };
-
-        StorageEngine.set(wlKey(uniqueWlId), freshListRecord);
-        const indexList = StorageEngine.get(windexKey(user.id)) || [];
-        StorageEngine.set(windexKey(user.id), [uniqueWlId, ...indexList]);
+        await StorageEngine.set("wishlists", id, wl);
         
-        syncAndFetchWishlists(user.id);
-        setActiveWl(freshListRecord);
+        const updatedUser = { ...user, wishlistIds: [id, ...(user.wishlistIds || [])] };
+        await StorageEngine.set(K_USERS, user.id, updatedUser);
+        setUser(updatedUser);
+        
+        const wls = await fetchWishlists(updatedUser.id, updatedUser.wishlistIds);
+        setWishlists(wls);
+        setActiveWl(wl);
         setScreen("wl-detail");
-      };
+      }
 
-      const handleUpdateItemOnList = (wlId, completeItemObj) => {
-        const targetedList = StorageEngine.get(wlKey(wlId));
-        let activeItemsArray = [];
-        
-        if (completeItemObj.id) {
-          activeItemsArray = targetedList.items.map(it => it.id === completeItemObj.id ? completeItemObj : it);
-        } else {
-          activeItemsArray = [...targetedList.items, { ...completeItemObj, id: genId(6) }];
-        }
+      async function updateWishlistMeta(id, patch) {
+        const wl = await StorageEngine.get("wishlists", id);
+        const next = { ...wl, ...patch };
+        await StorageEngine.set("wishlists", id, next);
+        setActiveWl(next);
+        const wls = await fetchWishlists(user.id, user.wishlistIds);
+        setWishlists(wls);
+      }
 
-        const savedUpdatedWl = { ...targetedList, items: activeItemsArray };
-        StorageEngine.set(wlKey(wlId), savedUpdatedWl);
-        
-        setActiveWl(savedUpdatedWl);
-        syncAndFetchWishlists(user.id);
-      };
-
-      const handleDropItemFromList = (wlId, itemId) => {
-        const targetedList = StorageEngine.get(wlKey(wlId));
-        const filteredItems = targetedList.items.filter(i => i.id !== itemId);
-        
-        const outputModifiedWl = { ...targetedList, items: filteredItems };
-        StorageEngine.set(wlKey(wlId), outputModifiedWl);
-        
-        setActiveWl(outputModifiedWl);
-        syncAndFetchWishlists(user.id);
-      };
-
-      const handleModifyMetaSettings = (wlId, patchedPayload) => {
-        const targetedList = StorageEngine.get(wlKey(wlId));
-        const updatedObject = { ...targetedList, ...patchedPayload };
-        
-        StorageEngine.set(wlKey(wlId), updatedObject);
-        setActiveWl(updatedObject);
-        syncAndFetchWishlists(user.id);
-      };
-
-      const handlePurgeWholeWishlist = (wlId) => {
-        const internalUserIndex = StorageEngine.get(windexKey(user.id)) || [];
-        const structuralFilteredIndex = internalUserIndex.filter(id => id !== wlId);
-        
-        StorageEngine.set(windexKey(user.id), structuralFilteredIndex);
-        syncAndFetchWishlists(user.id);
+      async function deleteWishlist(id) {
+        const nextIds = (user.wishlistIds || []).filter(x => x !== id);
+        const updatedUser = { ...user, wishlistIds: nextIds };
+        await StorageEngine.set(K_USERS, user.id, updatedUser);
+        setUser(updatedUser);
+        const wls = await fetchWishlists(updatedUser.id, nextIds);
+        setWishlists(wls);
         setScreen("dashboard");
-        notify("Wishlist permanent record purged");
-      };
+        notify("Wishlist deleted");
+      }
 
-      const handleToggleReservationState = (wlId, itemId, explicitGiverName) => {
-        const targetedList = StorageEngine.get(wlKey(wlId));
-        const transformedItems = targetedList.items.map(i => {
-          if (i.id === itemId) {
-            const isCurrentlyReserved = !!i.reserved;
-            return {
-              ...i,
-              reserved: !isCurrentlyReserved,
-              reservedBy: !isCurrentlyReserved ? (explicitGiverName || "A Generous Friend") : null
-            };
-          }
-          return i;
-        });
+      async function saveItem(wlId, item) {
+        const wl = await StorageEngine.get("wishlists", wlId);
+        let items = [];
+        if (item.id) {
+          items = wl.items.map((it) => (it.id === item.id ? item : it));
+        } else {
+          items = [...wl.items, { ...item, id: genId(6) }];
+        }
+        const next = { ...wl, items };
+        await StorageEngine.set("wishlists", wlId, next);
+        setActiveWl(next);
+      }
 
-        const unifiedResultObject = { ...targetedList, items: transformedItems };
-        StorageEngine.set(wlKey(wlId), unifiedResultObject);
-        setActiveWl(unifiedResultObject);
-      };
+      async function removeItem(wlId, itemId) {
+        const wl = await StorageEngine.get("wishlists", wlId);
+        const next = { ...wl, items: wl.items.filter((i) => i.id !== itemId) };
+        await StorageEngine.set("wishlists", wlId, next);
+        setActiveWl(next);
+      }
 
-      const viewContainerStyle = {
-        maxWidth: 430, margin: "0 auto", minHeight: "100vh", background: C.cream,
-        fontFamily: BODY_FONT, position: "relative", overflowX: "hidden",
-        boxShadow: "0 0 20px rgba(0,0,0,0.1)"
-      };
+      async function toggleReserve(wlId, itemId, reservedBy) {
+        const wl = await StorageEngine.get("wishlists", wlId);
+        const next = {
+          ...wl,
+          items: wl.items.map((i) => i.id === itemId ? { ...i, reserved: !i.reserved, reservedBy: !i.reserved ? (reservedBy || "A friend") : null } : i),
+        };
+        await StorageEngine.set("wishlists", wlId, next);
+        setActiveWl(next);
+      }
+
+      const shellStyle = { maxWidth: 430, margin: "0 auto", minHeight: "100vh", background: C.cream, fontFamily: BODY_FONT, position: "relative" };
+
+      if (booting) {
+        return (
+          <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: C.ink }}>
+            <WishOrb size={56} spin />
+          </div>
+        );
+      }
 
       return (
-        <div style={viewContainerStyle}>
-          {screen === "landing" && (
-            <div className="m-screen" style={{ minHeight: "100vh", background: C.ink }}>
-              <div style={{
-                background: `radial-gradient(circle at 30% 0%, rgba(192,38,212,0.55), transparent 55%), radial-gradient(circle at 80% 20%, rgba(251,191,36,0.35), transparent 45%), ${C.ink}`,
-                padding: "56px 26px 42px", color: "#fff",
-              }}>
-                <Logo size={32} dark />
-                <div style={{ marginTop: 46 }}>
-                  <div style={{ fontSize: 12.5, fontWeight: 700, letterSpacing: "0.14em", color: C.gold, textTransform: "uppercase", marginBottom: 10 }}>
-                    Wish it. Manifest it. Share it.
-                  </div>
-                  <h1 style={{ fontFamily: DISPLAY_FONT, fontSize: 38, lineHeight: 1.12, fontWeight: 700, margin: 0, letterSpacing: "-0.01em" }}>
-                    Every life moment deserves a wishlist.
-                  </h1>
-                  <p style={{ color: "rgba(255,255,255,0.72)", fontSize: 15, lineHeight: 1.55, marginTop: 16 }}>
-                    Weddings, birthdays, house-warmings. Paste any catalog product link from anywhere, generate clean shares, and coordinate directly with friends.
-                  </p>
-                </div>
-              </div>
-
-              <div style={{ background: C.cream, borderRadius: "26px 26px 0 0", marginTop: -22, padding: "28px 22px 34px", position: "relative" }}>
-                <GradButton onClick={() => { setAuthErr(""); setScreen("reg-input"); }}>
-                  <Icon name="Sparkles" size={17} /> Get started — it's free
-                </GradButton>
-                <div style={{ height: 12 }} />
-                <GhostButton onClick={() => { setAuthErr(""); setScreen("login"); }}>Log in</GhostButton>
-
-                <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "26px 0 16px" }}>
-                  <div style={{ flex: 1, height: 1, background: C.line }} />
-                  <span style={{ fontSize: 12, color: C.muted, fontWeight: 600 }}>OPEN A SHARED WISHLIST</span>
-                  <div style={{ flex: 1, height: 1, background: C.line }} />
-                </div>
-                <div style={{ display: "flex", gap: 8 }}>
-                  <input value={pasteLink} onChange={(e) => setPasteLink(e.target.value)} placeholder="Paste shared Link ID or Full Code" style={{ ...inputStyle(false), flex: 1 }} />
-                  <button onClick={() => openDeepLinkCode(pasteLink)} style={{ background: C.text, color: "#fff", border: "none", borderRadius: 12, padding: "0 18px", fontWeight: 700, cursor: "pointer" }}>
-                    <Icon name="ChevronRight" size={18} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {screen === "reg-input" && (
-            <div className="m-screen">
-              <TopBar title="Create your profile" onBack={() => setScreen("landing")} />
-              <div style={{ padding: "10px 22px 30px" }}>
-                <div style={{ display: "flex", background: "#F4EEFB", borderRadius: 12, padding: 4, marginBottom: 18 }}>
-                  {["email", "phone"].map((t) => (
-                    <button key={t} onClick={() => { setAuthType(t); setIdentifier(""); }}
-                      style={{
-                        flex: 1, padding: "10px 0", borderRadius: 9, border: "none", fontWeight: 700, fontSize: 13.5, cursor: "pointer",
-                        background: authType === t ? C.card : "transparent", color: authType === t ? C.magenta : C.muted,
-                        textTransform: "capitalize",
-                      }}>
-                      {t === "email" ? "Email" : "Mobile number"}
-                    </button>
-                  ))}
-                </div>
-                {authErr && <div style={{ background: "#FDEDF0", color: C.danger, fontSize: 13, padding: "10px 12px", borderRadius: 10, marginBottom: 16, fontWeight: 600 }}>{authErr}</div>}
-                <Field label={authType === "email" ? "Email address" : "Mobile number"} icon={authType === "email" ? "Mail" : "Phone"}>
-                  <input value={identifier} onChange={(e) => setIdentifier(e.target.value)} placeholder={authType === "email" ? "you@domain.com" : "Mobile contact digits"} style={inputStyle(true)} />
-                </Field>
-                <GradButton onClick={handleRegistrationNext}>Next Step <Icon name="ChevronRight" size={16} /></GradButton>
-              </div>
-            </div>
-          )}
-
-          {screen === "set-password" && (
-            <div className="m-screen">
-              <TopBar title="Secure your access" onBack={() => setScreen("reg-input")} />
-              <div style={{ padding: "10px 22px 30px" }}>
-                {authErr && <div style={{ background: "#FDEDF0", color: C.danger, fontSize: 13, padding: "10px 12px", borderRadius: 10, marginBottom: 16, fontWeight: 600 }}>{authErr}</div>}
-                <Field label="Display Name" icon="User">
-                  <input value={regName} onChange={(e) => setRegName(e.target.value)} placeholder="e.g. Robin Sharma" style={inputStyle(true)} />
-                </Field>
-                <Field label="Create Account Password" icon="Lock">
-                  <input type={showPw ? "text" : "password"} value={pw} onChange={(e) => setPw(e.target.value)} placeholder="Minimum 8 characters" style={inputStyle(true)} />
-                  <button onClick={() => setShowPw(!showPw)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer" }}>
-                    <Icon name={showPw ? "EyeOff" : "Eye"} size={17} color={C.muted} />
-                  </button>
-                </Field>
-                <Field label="Confirm Account Password" icon="KeyRound">
-                  <input type={showPw ? "text" : "password"} value={pw2} onChange={(e) => setPw2(e.target.value)} placeholder="Match choice password explicitly" style={inputStyle(true)} />
-                </Field>
-                <GradButton onClick={handleCreateAccountComplete}>Complete Configuration</GradButton>
-              </div>
-            </div>
-          )}
-
-          {screen === "registered" && (
-            <div className="m-screen" style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 30, textAlign: "center" }}>
-              <WishOrb size={64} spin />
-              <h2 style={{ fontFamily: DISPLAY_FONT, fontSize: 24, marginTop: 22, marginBottom: 8, color: C.text }}>Account Ready!</h2>
-              <p style={{ color: C.muted, fontSize: 14.5, marginBottom: 4 }}>Your verified Manifesta ID system signature is established.</p>
-              <p style={{ fontWeight: 700, color: C.magenta, fontSize: 16, marginBottom: 26 }}>{loginId}</p>
-              <GradButton onClick={handleProcessLogin} full={false} style={{ padding: "13px 34px" }}>
-                Enter Dashboard Now <Icon name="ChevronRight" size={16} />
-              </GradButton>
-            </div>
-          )}
-
-          {screen === "login" && (
-            <div className="m-screen">
-              <TopBar title="Welcome back" onBack={() => setScreen("landing")} />
-              <div style={{ padding: "10px 22px 30px" }}>
-                {authErr && <div style={{ background: "#FDEDF0", color: C.danger, fontSize: 13, padding: "10px 12px", borderRadius: 10, marginBottom: 16, fontWeight: 600 }}>{authErr}</div>}
-                <Field label="Email or Mobile Handle" icon="User">
-                  <input value={loginId} onChange={(e) => setLoginId(e.target.value)} placeholder="Enter registered information handle" style={inputStyle(true)} />
-                </Field>
-                <Field label="Profile Password" icon="Lock">
-                  <input type="password" value={loginPw} onChange={(e) => setLoginPw(e.target.value)} placeholder="Enter alphanumeric pass token" style={inputStyle(true)} />
-                </Field>
-                <GradButton onClick={handleProcessLogin}>Authorize Session</GradButton>
-              </div>
-            </div>
-          )}
-
-          {screen === "dashboard" && (
-            <div className="m-screen" style={{ minHeight: "100vh", paddingBottom: 40 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "22px 22px 4px" }}>
-                <Logo size={26} />
-                <button onClick={handleLogoutAction} style={{ background: "#F4EEFB", border: "none", borderRadius: 10, width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                  <Icon name="LogOut" size={16} color={C.text} />
-                </button>
-              </div>
-              <div style={{ padding: "18px 22px 8px" }}>
-                <div style={{ fontSize: 13, color: C.muted, fontWeight: 600 }}>Hello, {user?.name} 👋</div>
-                <h2 style={{ fontFamily: DISPLAY_FONT, fontSize: 25, margin: "2px 0 0", color: C.text }}>Your wishlists</h2>
-              </div>
-              <div style={{ padding: "16px 22px" }}>
-                <button onClick={() => setScreen("create-wl")} style={{
-                  width: "100%", background: GRAD, border: "none", borderRadius: 18, padding: "20px",
-                  display: "flex", alignItems: "center", gap: 14, cursor: "pointer", color: "#fff",
-                  boxShadow: "0 10px 24px rgba(192,38,212,0.3)",
-                }}>
-                  <div style={{ width: 42, height: 42, borderRadius: 12, background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <Icon name="Plus" size={22} />
-                  </div>
-                  <div style={{ textAlign: "left" }}>
-                    <div style={{ fontWeight: 700, fontSize: 15.5 }}>Start a new wishlist</div>
-                    <div style={{ fontSize: 12.5, opacity: 0.9 }}>For an anniversary, party, or major life goal</div>
-                  </div>
-                </button>
-              </div>
-
-              {wishlists.length === 0 ? (
-                <div style={{ textAlign: "center", padding: "50px 40px", color: C.muted }}>
-                  <Icon name="Gift" size={38} color={C.line} style={{ marginBottom: 10 }} />
-                  <div style={{ fontSize: 14, lineHeight: 1.6 }}>No wishlists configured yet. Build your canvas!</div>
-                </div>
-              ) : (
-                <div style={{ padding: "4px 22px", display: "flex", flexDirection: "column", gap: 12 }}>
-                  {wishlists.map((wl) => {
-                    const metadata = eventMeta(wl.eventType);
-                    return (
-                      <button key={wl.id} onClick={() => { setActiveWl(wl); setScreen("wl-detail"); }} style={{
-                        display: "flex", alignItems: "center", gap: 14, background: C.card, border: `1px solid ${C.line}`,
-                        borderRadius: 16, padding: "14px 16px", cursor: "pointer", textAlign: "left", width: "100%"
-                      }}>
-                        <div style={{ width: 46, height: 46, borderRadius: "50%", background: GRAD_SOFT, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                          <Icon name={metadata.icon} size={20} color={C.magenta} />
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontWeight: 700, fontSize: 15, color: C.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{wl.title}</div>
-                          <div style={{ fontSize: 12.5, color: C.muted, marginTop: 2 }}>{metadata.label} · {wl.items?.length || 0} item(s)</div>
-                        </div>
-                        <Icon name="ChevronRight" size={18} color={C.muted} />
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-
-          {screen === "create-wl" && (
-            <div className="m-screen">
-              <TopBar title="New Wishlist Registry" onBack={() => setScreen("dashboard")} />
-              <div style={{ padding: "10px 22px 30px" }}>
-                <Field label="Choose Theme Core Context">
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 9, marginBottom: 12 }}>
-                    {EVENT_TYPES.slice(0,6).map((e) => (
-                      <button key={e.id} onClick={() => handleCreateWishlist({ title: "", eventType: e.id, eventDate: "" })}
-                        style={{
-                          display: "flex", flexDirection: "column", alignItems: "center", gap: 6, padding: "12px 4px",
-                          borderRadius: 14, cursor: "pointer", border: `1.5px solid ${C.line}`, background: C.card,
-                        }}>
-                        <Icon name={e.icon} size={19} color={C.magenta} />
-                        <span style={{ fontSize: 10.5, fontWeight: 700, color: C.text, textAlign: "center" }}>{e.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </Field>
-              </div>
-            </div>
-          )}
-
-          {screen === "wl-detail" && activeWl && (
-            <WishlistDetailView 
-              wl={activeWl} 
-              onBack={() => setScreen("dashboard")} 
-              onSaveItem={(it) => handleUpdateItemOnList(activeWl.id, it)}
-              onRemoveItem={(id) => handleDropItemFromList(activeWl.id, id)}
-              onDeleteWishlist={() => handlePurgeWholeWishlist(activeWl.id)}
-              notify={notify}
-            />
-          )}
-
-          {screen === "shared" && activeWl && (
-            <div className="m-screen" style={{ minHeight: "100vh", paddingBottom: 50 }}>
-              <div style={{ background: C.ink, padding: "26px 22px 30px", color: "#fff" }}>
-                <button onClick={() => setScreen(user ? "dashboard" : "landing")} style={{ background: "rgba(255,255,255,0.15)", border: "none", borderRadius: 10, width: 34, height: 34, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", marginBottom: 18 }}>
-                  <Icon name="ArrowLeft" size={16} color="#fff" />
-                </button>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ width: 46, height: 46, borderRadius: "50%", background: GRAD, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <Icon name={eventMeta(activeWl.eventType).icon} size={20} color="#fff" />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 12, opacity: 0.75 }}>{activeWl.ownerName}'s Selection</div>
-                    <h2 style={{ fontFamily: DISPLAY_FONT, fontSize: 22, margin: "2px 0 0" }}>{activeWl.title}</h2>
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ padding: "18px 22px", display: "flex", flexDirection: "column", gap: 10 }}>
-                {activeWl.items.length === 0 ? (
-                  <div style={{ textAlign: "center", padding: "40px 20px", color: C.muted }}>No products inside this canvas yet.</div>
-                ) : activeWl.items.map((item) => (
-                  <div key={item.id} style={{ background: C.card, border: `1px solid ${C.line}`, borderRadius: 16, padding: 14, opacity: item.reserved ? 0.65 : 1 }}>
-                    <ItemPreview item={item} />
-                    <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-                      <a href={item.url} target="_blank" rel="noopener noreferrer" style={{
-                        flex: 1, textAlign: "center", fontSize: 12.5, fontWeight: 700, color: C.magenta,
-                        border: `1.5px solid ${C.line}`, borderRadius: 10, padding: "8px 0", textDecoration: "none",
-                        display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
-                      }}>
-                        View Link Catalog <Icon name="ExternalLink" size={12} />
-                      </a>
-                      <button onClick={() => {
-                        const guestName = prompt("Enter your name to coordinate gift coordination allocation:", "A Close Friend");
-                        if(guestName) handleToggleReservationState(activeWl.id, item.id, guestName);
-                      }} style={{ background: GRAD_SOFT, border: "none", borderRadius: 10, padding: "0 14px", fontSize: 12, fontWeight: 700, color: C.magenta, cursor: "pointer" }}>
-                        {item.reserved ? "Allocated ✓" : "Claim / Coordinate"}
-                      </button>
-                    </div>
-                    {item.reserved && <div style={{ marginTop: 8, fontSize: 11.5, color: C.gold, fontWeight: 700 }}>🎁 Claim registered by: {item.reservedBy}</div>}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
+        <div style={shellStyle}>
+          {screen === "landing" && <Landing onRegister={() => { resetAuthState(); setScreen("reg-input"); }} onLogin={() => { setAuthErr(""); setScreen("login"); }} onOpenLink={openSharedByCode} pasteLink={pasteLink} setPasteLink={setPasteLink} />}
+          {screen === "reg-input" && <RegisterInput authType={authType} setAuthType={setAuthType} identifier={identifier} setIdentifier={setIdentifier} err={authErr} onBack={() => setScreen("landing")} onSubmit={handleSendOtp} />}
+          {screen === "otp" && <OtpScreen identifier={identifier} authType={authType} otp={otp} otpInput={otpInput} setOtpInput={setOtpInput} err={otpErr} onBack={() => setScreen("reg-input")} onVerify={handleVerifyOtp} onResend={() => { const c = genOtp(); setOtp(c); setOtpInput(""); setOtpErr(""); notify("New OTP generated"); }} />}
+          {screen === "set-password" && <SetPassword name={regName} setName={setRegName} pw={pw} setPw={setPw} pw2={pw2} setPw2={setPw2} showPw={showPw} setShowPw={setShowPw} err={authErr} onBack={() => setScreen("otp")} onSubmit={handleCreateAccount} />}
+          {screen === "registered" && <RegisteredScreen loginId={loginId} onContinue={() => { setAuthErr(""); setScreen("login"); }} />}
+          {screen === "login" && <LoginScreen loginId={loginId} setLoginId={setLoginId} loginPw={loginPw} setLoginPw={setLoginPw} err={authErr} onBack={() => setScreen("landing")} onSubmit={handleLogin} onRegister={() => { resetAuthState(); setScreen("reg-input"); }} />}
+          {screen === "dashboard" && <Dashboard user={user} wishlists={wishlists} onCreate={() => setScreen("create-wl")} onOpen={(wl) => { setActiveWl(wl); setScreen("wl-detail"); }} onLogout={handleLogout} />}
+          {screen === "create-wl" && <CreateWishlist onBack={() => setScreen("dashboard")} onCreate={createWishlist} />}
+          {screen === "wl-detail" && activeWl && <WishlistDetail wl={activeWl} user={user} onBack={() => setScreen("dashboard")} onSaveItem={saveItem} onRemoveItem={removeItem} onUpdateMeta={updateWishlistMeta} onDelete={deleteWishlist} notify={notify} />}
+          {screen === "shared" && activeWl && <SharedView wl={activeWl} isOwner={user && activeWl.ownerId === user.id} onToggleReserve={toggleReserve} onHome={() => setScreen(user ? "dashboard" : "landing")} onStartOwn={() => { resetAuthState(); setScreen(user ? "dashboard" : "reg-input"); }} loggedIn={!!user} />}
           <Toast text={toast} />
         </div>
       );
     }
 
-    /* =================================================================
-       SUB-MODULE RENDERING COMPONENTS (DECOUPLED)
-    ================================================================= */
-    function WishlistDetailView({ wl, onBack, onSaveItem, onRemoveItem, onDeleteWishlist, notify }) {
-      const [isOpen, setIsOpen] = useState(false);
-      const [urlInput, setUrlInput] = useState("");
-      const [titleInput, setTitleInput] = useState("");
-      const [priceInput, setPriceInput] = useState("");
-
-      const executeSave = () => {
-        if(!urlInput) return;
-        onSaveItem({
-          url: urlInput,
-          title: titleInput || guessTitle(urlInput),
-          price: priceInput || "TBD",
-          image: "",
-          note: ""
-        });
-        setUrlInput(""); setTitleInput(""); setPriceInput("");
-        setIsOpen(false);
-        notify("Product registered directly.");
-      };
-
-      const copyWebDeepLink = () => {
-        // Formulate universal deployment web string using query patterns for serverless targets
-        const trackingLink = `${window.location.origin}${window.location.pathname}?w=${wl.id}`;
-        navigator.clipboard.writeText(trackingLink).then(() => {
-          notify("Share link copied to device matrix!");
-        }).catch(() => {
-          alert(`Copy manual token link: ${trackingLink}`);
-        });
-      };
-
+    function Landing({ onRegister, onLogin, onOpenLink, pasteLink, setPasteLink }) {
       return (
-        <div style={{ padding: "10px 14px" }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
-            <button onClick={onBack} style={{ background: '#F4EEFB', border:'none', padding: 8, borderRadius: 8, cursor: 'pointer' }}>
-              <Icon name="ArrowLeft" size={16} />
-            </button>
-            <h3 style={{ margin:0, fontFamily: DISPLAY_FONT }}>{wl.title}</h3>
-            <button onClick={copyWebDeepLink} style={{ background: GRAD, color: '#fff', border:'none', padding: '8px 12px', borderRadius: 8, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems:'center', gap: 4 }}>
-              <Icon name="Share2" size={14} /> Share Link
-            </button>
+        <div style={{ minHeight: "100vh", background: C.ink }}>
+          <div style={{ background: `radial-gradient(circle at 30% 0%, rgba(192,38,212,0.55), transparent 55%), ${C.ink}`, padding: "56px 26px 42px", color: "#fff" }}>
+            <Logo size={32} dark />
+            <div style={{ marginTop: 46 }}>
+              <div style={{ fontSize: 12.5, fontWeight: 700, color: C.gold, marginBottom: 10 }}>WISH IT. MANIFEST IT. SHARE IT.</div>
+              <h1 style={{ fontFamily: DISPLAY_FONT, fontSize: 38, margin: 0 }}>Every life moment deserves a wishlist.</h1>
+            </div>
           </div>
+          <div style={{ background: C.cream, borderRadius: "26px 26px 0 0", marginTop: -22, padding: "28px 22px 34px" }}>
+            <GradButton onClick={onRegister}><Sparkles size={17} /> Get started — it's free</GradButton>
+            <div style={{ height: 12 }} />
+            <GhostButton onClick={onLogin}>Log in</GhostButton>
+            <div style={{ display: "flex", gap: 8, marginTop: 20 }}>
+              <input value={pasteLink} onChange={(e) => setPasteLink(e.target.value)} placeholder="Paste link parameter here..." style={{ ...inputStyle(false), flex: 1 }} />
+              <button onClick={() => onOpenLink(pasteLink)} style={{ background: C.text, color: "#fff", border: "none", borderRadius: 12, padding: "0 18px" }}><ChevronRight size={18} /></button>
+            </div>
+          </div>
+        </div>
+      );
+    }
 
-          <div style={{ display:'flex', flexDirection:'column', gap: 12, marginBottom: 80 }}>
-            {wl.items.map(it => (
-              <div key={it.id} style={{ background: '#fff', padding: 12, borderRadius: 14, border: '1.5px solid #F0E6F6' }}>
-                <ItemPreview item={it} />
-                <div style={{ display:'flex', justifyContent: 'flex-end', gap: 10, marginTop: 10 }}>
-                  <button onClick={() => onRemoveItem(it.id)} style={{ background: 'none', border:'none', color: C.danger, cursor:'pointer', fontWeight: 600, fontSize:13 }}>Drop</button>
-                </div>
+    function RegisterInput({ authType, setAuthType, identifier, setIdentifier, err, onBack, onSubmit }) {
+      return (
+        <div style={{ padding: 20 }}>
+          <TopBar title="Create account" onBack={onBack} />
+          <ErrBox msg={err} />
+          <Field label={authType === "email" ? "Email" : "Phone"} icon={authType === "email" ? Mail : Phone}>
+            <input value={identifier} onChange={(e) => setIdentifier(e.target.value)} style={inputStyle(true)} />
+          </Field>
+          <GradButton onClick={onSubmit}>Send OTP</GradButton>
+        </div>
+      );
+    }
+
+    function OtpScreen({ identifier, otp, otpInput, setOtpInput, err, onBack, onVerify }) {
+      return (
+        <div style={{ padding: 20 }}>
+          <TopBar title="Verify OTP" onBack={onBack} />
+          <div style={{ padding: 12, background: '#fff', border: '1px dashed text', marginBottom: 10 }}>Demo Code: {otp}</div>
+          <ErrBox msg={err} />
+          <input value={otpInput} onChange={(e) => setOtpInput(e.target.value)} style={inputStyle(false)} />
+          <div style={{ height: 10 }} />
+          <GradButton onClick={onVerify}>Verify</GradButton>
+        </div>
+      );
+    }
+
+    function SetPassword({ name, setName, pw, setPw, pw2, setPw2, err, onBack, onSubmit }) {
+      return (
+        <div style={{ padding: 20 }}>
+          <TopBar title="Set Password" onBack={onBack} />
+          <ErrBox msg={err} />
+          <Field label="Your Name" icon={UserIcon}><input value={name} onChange={(e) => setName(e.target.value)} style={inputStyle(true)} /></Field>
+          <Field label="Password" icon={Lock}><input type="password" value={pw} onChange={(e) => setPw(e.target.value)} style={inputStyle(true)} /></Field>
+          <Field label="Confirm" icon={KeyRound}><input type="password" value={pw2} onChange={(e) => setPw2(e.target.value)} style={inputStyle(true)} /></Field>
+          <GradButton onClick={onSubmit}>Complete Setup</GradButton>
+        </div>
+      );
+    }
+
+    function RegisteredScreen({ loginId, onContinue }) {
+      return (
+        <div style={{ padding: 40, textAlign: "center" }}>
+          <h2>Account setup complete!</h2>
+          <p>Your tracking ID: {loginId}</p>
+          <GradButton onClick={onContinue}>Proceed to Login</GradButton>
+        </div>
+      );
+    }
+
+    function LoginScreen({ loginId, setLoginId, loginPw, setLoginPw, err, onBack, onSubmit }) {
+      return (
+        <div style={{ padding: 20 }}>
+          <TopBar title="Login" onBack={onBack} />
+          <ErrBox msg={err} />
+          <Field label="ID" icon={UserIcon}><input value={loginId} onChange={(e) => setLoginId(e.target.value)} style={inputStyle(true)} /></Field>
+          <Field label="Password" icon={Lock}><input type="password" value={loginPw} onChange={(e) => setLoginPw(e.target.value)} style={inputStyle(true)} /></Field>
+          <GradButton onClick={onSubmit}>Login</GradButton>
+        </div>
+      );
+    }
+
+    function Dashboard({ user, wishlists, onCreate, onOpen, onLogout }) {
+      return (
+        <div style={{ padding: 20 }}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <Logo size={26} />
+            <button onClick={onLogout} style={{ border: "none", background: "none" }}><LogOut size={16} /></button>
+          </div>
+          <h3>Welcome, {user.name}</h3>
+          <GradButton onClick={onCreate}>Create Wishlist</GradButton>
+          <div style={{ marginTop: 20 }}>
+            {wishlists.map(wl => (
+              <div key={wl.id} onClick={() => onOpen(wl)} style={{ padding: 12, background: "#fff", marginBottom: 8, borderRadius: 10, cursor: "pointer" }}>
+                <strong>{wl.title}</strong>
               </div>
             ))}
           </div>
+        </div>
+      );
+    }
 
-          <div style={{ position:'fixed', bottom: 15, left: '50%', transform: 'translateX(-50%)', width: '90%', maxWidth: 400 }}>
-            <GradButton onClick={() => setIsOpen(true)}><Icon name="Plus" size={16} /> Mount Global Item Link</GradButton>
+    function CreateWishlist({ onBack, onCreate }) {
+      const [title, setTitle] = useState("");
+      return (
+        <div style={{ padding: 20 }}>
+          <TopBar title="New List" onBack={onBack} />
+          <Field label="List Title"><input value={title} onChange={(e) => setTitle(e.target.value)} style={inputStyle(false)} /></Field>
+          <GradButton onClick={() => onCreate({ title, eventType: "other" })}>Create</GradButton>
+        </div>
+      );
+    }
+
+    function WishlistDetail({ wl, onBack, onSaveItem, notify }) {
+      const [showAdd, setShowAdd] = useState(false);
+      const [url, setUrl] = useState("");
+      const [title, setTitle] = useState("");
+      const shareLink = `${window.location.origin}${window.location.pathname}?w=${wl.id}`;
+
+      return (
+        <div style={{ padding: 20 }}>
+          <TopBar title={wl.title} onBack={onBack} />
+          <div style={{ background: "#fff", padding: 10, marginBottom: 10 }}>
+            <small>Share Link:</small>
+            <input readOnly value={shareLink} style={{ width: "100%", padding: 4 }} />
+            <button onClick={() => { navigator.clipboard.writeText(shareLink); notify("Link copied!"); }} style={{ marginTop: 4 }}>Copy Link</button>
           </div>
-
-          {isOpen && (
-            <div style={{ position:'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'flex-end' }}>
-              <div style={{ background: '#FFF8EE', width: '100%', padding: 20, borderRadius: '20px 20px 0 0', fontFamily: BODY_FONT }}>
-                <h4 style={{ margin: '0 0 15px 0' }}>Attach Catalog Link Entry</h4>
-                <Field label="Product Page URL">
-                  <input value={urlInput} onChange={(e) => setUrlInput(e.target.value)} placeholder="https://..." style={inputStyle(false)} />
-                </Field>
-                <Field label="Custom Product Name (Optional)">
-                  <input value={titleInput} onChange={(e) => setTitleInput(e.target.value)} placeholder="Leave blank to auto-guess" style={inputStyle(false)} />
-                </Field>
-                <Field label="Target Pricing Notation">
-                  <input value={priceInput} onChange={(e) => setPriceInput(e.target.value)} placeholder="e.g. ₹1,200 or $45" style={inputStyle(false)} />
-                </Field>
-                <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
-                  <button onClick={() => setIsOpen(false)} style={{ flex:1, padding: 12, borderRadius: 10, border: '1.5px solid #ccc', background: 'none', cursor: 'pointer' }}>Cancel</button>
-                  <button onClick={executeSave} style={{ flex:1, padding: 12, borderRadius: 10, border: 'none', background: GRAD, color:'#fff', fontWeight:600, cursor: 'pointer' }}>Save Product</button>
-                </div>
-              </div>
+          <div>
+            {wl.items.map(item => <div key={item.id} style={{ background: "#fff", padding: 10, marginBottom: 8 }}><ItemPreview item={item} /></div>)}
+          </div>
+          <GradButton onClick={() => setShowAdd(true)}>Add Item</GradButton>
+          {showAdd && (
+            <div style={{ marginTop: 10, background: "#fff", padding: 10 }}>
+              <input placeholder="URL" value={url} onChange={e => setUrl(e.target.value)} style={inputStyle(false)} />
+              <input placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} style={inputStyle(false)} />
+              <button onClick={() => { onSaveItem(wl.id, { url, title }); setShowAdd(false); }}>Save</button>
             </div>
           )}
         </div>
       );
     }
 
-    const rootElement = document.getElementById("root");
-    const root = ReactDOM.createRoot(rootElement);
+    function SharedView({ wl, onToggleReserve }) {
+      return (
+        <div style={{ padding: 20 }}>
+          <h2>{wl.title}</h2>
+          <p>Created by {wl.ownerName}</p>
+          <div>
+            {wl.items.map(item => (
+              <div key={item.id} style={{ background: "#fff", padding: 10, marginBottom: 8 }}>
+                <ItemPreview item={item} />
+                <button onClick={() => onToggleReserve(wl.id, item.id, "Someone")} style={{ marginTop: 4 }}>
+                  {item.reserved ? "Reserved!" : "Reserve this gift"}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function ErrBox({ msg }) {
+      if (!msg) return null;
+      return <div style={{ color: "red", padding: 8, background: "#fff", marginBottom: 10 }}>{msg}</div>;
+    }
+
+    const container = document.getElementById('root');
+    const root = ReactDOM.createRoot(container);
     root.render(<App />);
   </script>
 </body>
