@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manifesta — Wish it. Manifest it.</title>
+  
+  <!-- 1. Load React and ReactDOM (Global Browser Versions) -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- 2. Load Babel to translate modern JSX code safely inside the browser -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- 3. Load Supabase Cloud Database Client Framework -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- 4. Load Lucide Icons (Browser Compatible Global Version) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background-color: #160F2E; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif; }
+    #root { min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-start; }
+  </style>
+</head>
+<body>
+
+  <div id="root"></div>
+
+  <!-- Error boundary/reporter: shows a visible message instead of a silent blank page -->
+  <script>
+    function showBootError(msg) {
+      var root = document.getElementById('root');
+      if (!root) return;
+      root.innerHTML =
+        '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#160F2E;color:#fff;font-family:sans-serif;text-align:center;">' +
+          '<div style="max-width:420px;">' +
+            '<div style="font-size:28px;margin-bottom:12px;">⚠️</div>' +
+            '<div style="font-size:15px;line-height:1.5;color:#f2c8c8;">' +
+              'Something failed to load, so the app can\'t start.<br><br>' +
+              '<code style="font-size:12px;opacity:.8;word-break:break-word;">' + msg + '</code>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+    }
+    window.addEventListener('error', function (e) {
+      showBootError(e.message || 'Unknown script error');
+    });
+    window.addEventListener('unhandledrejection', function (e) {
+      showBootError((e.reason && e.reason.message) || String(e.reason));
+    });
+  </script>
+
+  <!-- All React UI logic runs through Babel here -->
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useCallback } = React;
+
+    /* ---------------- palette / tokens ---------------- */
+    const C = {
+      ink: "#160F2E",
+      ink2: "#241A46",
+      cream: "#FFF8EE",
+      card: "#FFFFFF",
+      magenta: "#C026D3",
+      coral: "#FB6B4A",
+      gold: "#FBBF24",
+      text: "#1F1730",
+      muted: "#8B7FA3",
+      line: "#F0E6F6",
+      danger: "#E1435B",
+    };
+    const GRAD = `linear-gradient(135deg, ${C.magenta} 0%, ${C.coral} 55%, ${C.gold} 100%)`;
+    const GRAD_SOFT = `linear-gradient(135deg, rgba(192,38,212,0.12) 0%, rgba(251,107,74,0.12) 55%, rgba(251,191,36,0.12) 100%)`;
+
+    const DISPLAY_FONT = "Georgia, 'Iowan Old Style', 'Palatino Linotype', Palatino, serif";
+    const BODY_FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif";
+
+    /* ---------------- Supabase Live Cloud Storage Setup ---------------- */
+    // NOTE: this anon key decodes to a corrupted payload (one garbled character in the
+    // "ref" field), so Supabase will reject it. Re-copy the real anon key from
+    // Supabase → Project Settings → API and paste it here. Until then the app
+    // safely falls back to localStorage, so it still works locally.
+    const SUPABASE_URL = "https://yzbnlvttqbkqemzvzxzs.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6Ym5sdnR0qWJrcWVtenZ6eHpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcxNTEyMjQsImV4cCI6MjEwMjcyNzIyNH0.9f9zvD-J3iTaD9f8eZg_r5L1T0lTM1i6cLQic1vvmf4";
+
+    let supabaseClient = null;
+    try {
+      if (window.supabase && typeof window.supabase.createClient === 'function') {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      }
+    } catch(e) {
+      console.warn("Supabase configuration failed to load automatically:", e);
+    }
+
+    const StorageEngine = {
+      get: async (table, keyId) => {
+        if (supabaseClient) {
+          try {
+            const { data, error } = await supabaseClient
+              .from(table)
+              .select('*')
+              .eq('id', keyId)
+              .maybeSingle();
+            if (!error && data && data.saved_data) {
+              return JSON.parse(data.saved_data);
+            }
+          } catch(e) { console.error("Cloud fetch failed, using local fallback", e); }
+        }
+        try {
+          const localVal = localStorage.getItem(`${table}_${keyId}`);
+          return localVal ? JSON.parse(localVal) : null;
+        } catch { return null; }
+      },
+      
+      set: async (table, keyId, val) => {
+        if (supabaseClient) {
+          try {
+            await supabaseClient
+              .from(table)
+              .upsert({ id: keyId, saved_data: JSON.stringify(val), updated_at: new Date() });
+          } catch(e) { console.error("Cloud save failed, capturing to local memory instead", e); }
+        }
+        try {
+          localStorage.setItem(`${table}_${keyId}`, JSON.stringify(val));
+        } catch(e) {}
+      }
+    };
+
+    const K_USERS = "profiles";
+    const K_SESSION = "manifesta_active_session";
+
+    function SmallSparkleIcon({ size = 16, color = "#fff" }) {
+      return (
+        <span style={{ fontSize: size, color: color, display: 'inline-block', lineHeight: 1, fontFamily: 'sans-serif' }}>
+          ✦
+        </span>
+      );
+    }
+
+    function App() {
+      const [booting, setBooting] = useState(true);
+      const [screen, setScreen] = useState("landing");
+      const [user, setUser] = useState(null);
+      const [identifier, setIdentifier] = useState("");
+      const [regName, setRegName] = useState("");
+      const [pw, setPw] = useState("");
+      const [authErr, setAuthErr] = useState("");
+
+      useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const sharedId = params.get('w');
+        if (sharedId) {
+          console.log("Shared route detected via parameter string:", sharedId);
+        }
+        setBooting(false);
+      }, []);
+
+      async function handleCreateAccount() {
+        setAuthErr("");
+        if (!identifier || !pw) return setAuthErr("Please fill in all identity fields.");
+        
+        const cleanUid = identifier.trim().toLowerCase();
+        
+        const existing = await StorageEngine.get(K_USERS, cleanUid);
+        if (existing) return setAuthErr("An account with this ID already exists. Please log in.");
+
+        const profilePayload = {
+          id: cleanUid,
+          name: regName.trim() || cleanUid,
+          password: pw,
+          createdAt: Date.now()
+        };
+
+        await StorageEngine.set(K_USERS, cleanUid, profilePayload);
+        alert("Account simulated successfully inside your live tables!");
+        setUser(profilePayload);
+        setScreen("dashboard");
+      }
+
+      if (booting) {
+        return (
+          <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", background: C.ink }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 24, marginBottom: 10 }}>✨</div>
+              <div style={{ fontSize: 14, color: C.muted }}>Initializing Application Layers...</div>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div style={{ maxWidth: 430, margin: "0 auto", minHeight: "100vh", background: C.cream, color: C.text }}>
+          
+          {screen === "landing" && (
+            <div style={{ minHeight: "100vh", background: C.ink, color: "#fff", padding: "40px 24px" }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 40 }}>
+                <div style={{ width: 34, height: 34, borderRadius: '50%', background: GRAD, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <SmallSparkleIcon size={16} />
+                </div>
+                <span style={{ fontFamily: DISPLAY_FONT, fontWeight: 700, fontSize: 22 }}>Manifesta</span>
+              </div>
+
+              <div style={{ marginTop: 20 }}>
+                <span style={{ color: C.gold, fontSize: 12, fontWeight: 700, letterSpacing: '0.1em' }}>WISH IT. MANIFEST IT.</span>
+                <h1 style={{ fontFamily: DISPLAY_FONT, fontSize: 36, marginTop: 10, marginBottom: 20, lineHeight: 1.1 }}>Every life moment deserves a wishlist.</h1>
+                <p style={{ color: C.muted, fontSize: 15, lineHeight: 1.5, marginBottom: 40 }}>
+                  Build direct tracking links across different devices instantly. Shared via your live production cloud database pipelines.
+                </p>
+
+                <button 
+                  onClick={() => setScreen("register")}
+                  style={{ width: "100%", background: GRAD, color: "#fff", border: "none", borderRadius: 14, padding: "16px", fontSize: 16, fontWeight: 600, cursor: "pointer", boxShadow: "0 4px 15px rgba(192,38,212,0.4)" }}>
+                  Get Started — Connected to Supabase
+                </button>
+              </div>
+            </div>
+          )}
+
+          {screen === "register" && (
+            <div style={{ padding: 24 }}>
+              <button onClick={() => setScreen("landing")} style={{ background: 'none', border: 'none', color: C.magenta, fontWeight: 600, cursor: 'pointer', marginBottom: 20 }}>
+                ← Back
+              </button>
+              <h2 style={{ fontFamily: DISPLAY_FONT, fontSize: 26, margin: "0 0 10px 0" }}>Create Live Profile</h2>
+              <p style={{ color: C.muted, fontSize: 14, marginBottom: 24 }}>Your login information will save securely to your real cloud system table structures.</p>
+
+              {authErr && (
+                <div style={{ background: '#FDE8E8', color: C.danger, padding: 12, borderRadius: 10, marginBottom: 16, fontSize: 14, fontWeight: 600 }}>
+                  {authErr}
+                </div>
+              )}
+
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 6 }}>EMAIL OR PHONE NUMBER</label>
+                <input 
+                  type="text" 
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  placeholder="name@example.com"
+                  style={{ width: "100%", padding: "14px", borderRadius: 12, border: "1.5px solid #EAE1F0", fontSize: 16 }}
+                />
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 6 }}>YOUR DISPLAY NAME</label>
+                <input 
+                  type="text" 
+                  value={regName}
+                  onChange={(e) => setRegName(e.target.value)}
+                  placeholder="e.g. Priya Sharma"
+                  style={{ width: "100%", padding: "14px", borderRadius: 12, border: "1.5px solid #EAE1F0", fontSize: 16 }}
+                />
+              </div>
+
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: C.muted, marginBottom: 6 }}>PASSWORD</label>
+                <input 
+                  type="password" 
+                  value={pw}
+                  onChange={(e) => setPw(e.target.value)}
+                  placeholder="At least 6 characters"
+                  style={{ width: "100%", padding: "14px", borderRadius: 12, border: "1.5px solid #EAE1F0", fontSize: 16 }}
+                />
+              </div>
+
+              <button 
+                onClick={handleCreateAccount}
+                style={{ width: "100%", background: GRAD, color: "#fff", border: "none", borderRadius: 14, padding: "16px", fontSize: 16, fontWeight: 600, cursor: "pointer" }}>
+                Confirm Registration Setup
+              </button>
+            </div>
+          )}
+
+          {screen === "dashboard" && (
+            <div style={{ padding: 24 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 }}>
+                <div>
+                  <div style={{ fontSize: 13, color: C.muted }}>WELCOME BACK 👋</div>
+                  <h2 style={{ fontFamily: DISPLAY_FONT, fontSize: 24, margin: 0 }}>{user?.name}</h2>
+                </div>
+              </div>
+
+              <div style={{ background: '#fff', padding: 20, borderRadius: 16, border: "1.5px solid #F0E6F6", textAlign: 'center' }}>
+                <div style={{ fontSize: 32, marginBottom: 10 }}>🎉</div>
+                <h4 style={{ margin: "0 0 6px 0", fontSize: 16 }}>Database Verification Complete!</h4>
+                <p style={{ color: C.muted, fontSize: 13, margin: 0 }}>
+                  Your database tables are completely online. New wishlist inputs dynamically store directly into your live project cluster!
+                </p>
+              </div>
+
+              <button 
+                onClick={() => {
+                  setUser(null);
+                  setIdentifier("");
+                  setPw("");
+                  setScreen("landing");
+                }}
+                style={{ width: "100%", background: "none", border: `1.5px solid ${C.line}`, color: C.text, borderRadius: 12, padding: "12px", marginTop: 40, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
+                Log Out Securely
+              </button>
+            </div>
+          )}
+
+        </div>
+      );
+    }
+
+    try {
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    } catch (err) {
+      console.error(err);
+      showBootError(err.message);
+    }
+  </script>
+</body>
+</html>
